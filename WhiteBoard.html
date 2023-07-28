@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White Board in HTML</title>
+    <style>
+        body {
+            background-color: grey;
+            margin: 0;
+        }
+
+        #canvasBoard {
+            color: black;
+            background-color: white;
+            border: solid 2px grey;
+            margin-top: 20px;
+            display: block;
+            cursor: crosshair;
+        }
+
+        #controls {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <canvas id="canvasBoard"></canvas>
+        <div id="controls">
+            <button onclick="clearCanvas()">Clear</button>
+            <label for="cursorColor">Cursor Color:</label>
+            <select id="cursorColor" onchange="changeCursorColor()">
+                <option value="black">Black</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+                <option value="white">Rubber</option> 
+            </select>
+        </div>
+        <script>
+            var canvasElem = document.getElementById("canvasBoard");
+            var canvasContext = canvasElem.getContext("2d");
+            var cursorColor = "black";
+
+            function sizeCanvas() {
+                canvasElem.width = window.innerWidth;
+                canvasElem.height = window.innerHeight - 50; // Subtract 50 for a better display
+            }
+
+            // Call sizeCanvas to resize the canvas on page load
+            sizeCanvas();
+
+            // Function to handle mouse movements and drawing
+            var pos = { x: 0, y: 0 };
+
+            function setPos(e) {
+                pos.x = e.clientX - canvasElem.offsetLeft;
+                pos.y = e.clientY - canvasElem.offsetTop;
+            }
+
+            function draw(e) {
+                if (e.buttons !== 1) {
+                    return;
+                }
+
+                canvasContext.beginPath();
+                canvasContext.lineWidth = 10;
+                canvasContext.lineCap = "round";
+                canvasContext.strokeStyle = cursorColor;
+
+                canvasContext.moveTo(pos.x, pos.y);
+                setPos(e);
+                canvasContext.lineTo(pos.x, pos.y);
+                canvasContext.stroke();
+            }
+
+            // Add event listeners to the canvas
+            canvasElem.addEventListener("mousemove", draw);
+            canvasElem.addEventListener("mousedown", setPos);
+            canvasElem.addEventListener("mouseenter", setPos);
+
+            // Resize the canvas when the window size changes
+            window.addEventListener("resize", sizeCanvas);
+
+            // Function to clear the canvas
+            function clearCanvas() {
+                canvasContext.clearRect(0, 0, canvasElem.width, canvasElem.height);
+            }
+
+            // Function to change the color of the cursor
+            function changeCursorColor() {
+                cursorColor = document.getElementById("cursorColor").value;
+            }
+        </script>
+    </center>
+</body>
+</html>
